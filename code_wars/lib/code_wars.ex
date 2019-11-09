@@ -41,6 +41,20 @@ defmodule LoveVsFriendship do
     end
 end
 
+defmodule Zoo do
+    def fix_the_meerkat(tuple) do
+        Tuple.to_list(tuple)
+        |> Enum.reverse
+        |> List.to_tuple
+    end
+end
+
+defmodule Cashier do
+    def format_money(amount) do
+      "$" <> :erlang.float_to_binary(amount, [decimals: 2])
+    end
+end
+
 defmodule MappingAndFiltering do
   # 1. Given a list `["Alice Addison", "Bob Benetton"]`, you should (using `Enum.map`) return a list `[["Alice", "Addison"], ["Bob", "Benetton"]]`\
   # 2. Given a list `[%{name: "Alice Addison", age: 14}, %{name: "Bob Benetton", age: 21}, %{name: "Eve Elliot", age: 18}]`, return the following list: `["Alice Addison: 14 years old", "Bob Benetton: 21 years old", "Eve Elliot: 18 years old"]`
