@@ -1,8 +1,27 @@
 defmodule CryptoWebSocket do
     use WebSockex
 
-    def start_link(state) do
-        WebSockex.start_link("wss://ws.coincap.io/prices?assets=bitcoin,ethereum,monero,litecoin", __MODULE__, state)
+    defp generate_url do
+        base_url = "wss://ws.coincap.io/prices?assets="
+        url = CryptoController.get_initial_assets_list
+        |> Map.values()
+        |> Enum.reduce(base_url, fn x, acc -> acc <> x <> "," end)
+        String.slice(url, 0, String.length(url) - 1)
+    end
+
+    def child_spec(_) do
+        %{
+            id: CryptoWebSocket,
+            start: {
+                CryptoWebSocket,
+                :start_link,
+                [generate_url(), "Success"]
+            }
+        }
+    end
+
+    def start_link(url, state) do
+        WebSockex.start_link(url, __MODULE__, state)
     end
 
     def handle_frame({_type, msg}, state) do
