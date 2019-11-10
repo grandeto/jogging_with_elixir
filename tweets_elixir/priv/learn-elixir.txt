@@ -1,0 +1,10 @@
+https://github.com/itsgreggreg/elixir_quick_reference
+https://github.com/christopheradams/elixir_style_guide
+https://github.com/rrrene/credo
+https://exercism.io/#explore-languages
+https://elixir-slackin.herokuapp.com/
+https://elixirstatus.com/
+https://elixirweekly.net/
+https://twitter.com/elixirfountain
+https://elixirconf.com/
+https://github.com/sasa1977/elixir-in-action
