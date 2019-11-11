@@ -15,7 +15,7 @@ defmodule CryptoWebSocket do
             start: {
                 CryptoWebSocket,
                 :start_link,
-                [generate_url(), "Success"]
+                [generate_url(), []]
             }
         }
     end
@@ -24,9 +24,9 @@ defmodule CryptoWebSocket do
         WebSockex.start_link(url, __MODULE__, state)
     end
 
-    def handle_frame({_type, msg}, state) do
-        news = Jason.decode!(msg)
-        CryptoController.create(news)
+    def handle_frame({_type, news}, state) do
+        news = Jason.decode!(news)
+        CryptoController.update_news(news)
         {:ok, state}
     end
 
