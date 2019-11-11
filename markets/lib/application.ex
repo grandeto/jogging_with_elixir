@@ -3,13 +3,15 @@ defmodule MarketsApplication do
   # for more information on OTP Applications
   @moduledoc false
 
+  alias Services.CryptoCoincapWebSocketService, as: CryptoCoincapWebSocketService
+
   use Application
 
   def start(_type, _args) do
     children = [
       # Starts a worker by calling: WebSocket.start_link(arg)
       # {WebSocket, arg}
-      CryptoWebSocket
+      CryptoCoincapWebSocketService
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

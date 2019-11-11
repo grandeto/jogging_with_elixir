@@ -1,7 +1,8 @@
-defmodule CryptoWebSocket do
+defmodule Services.CryptoCoincapWebSocketService do
+    alias Controllers.CryptoController, as: CryptoController
     use WebSockex
 
-    defp generate_url do
+    def generate_url do
         base_url = "wss://ws.coincap.io/prices?assets="
         url = CryptoController.get_initial_assets_list
         |> Map.values()
@@ -11,9 +12,9 @@ defmodule CryptoWebSocket do
 
     def child_spec(_) do
         %{
-            id: CryptoWebSocket,
+            id: Services.CryptoCoincapWebSocketService,
             start: {
-                CryptoWebSocket,
+                Services.CryptoCoincapWebSocketService,
                 :start_link,
                 [generate_url(), []]
             }
@@ -25,9 +26,15 @@ defmodule CryptoWebSocket do
     end
 
     def handle_frame({_type, news}, state) do
+        IO.inspect(self())
+        IO.inspect(news)
         news = Jason.decode!(news)
         CryptoController.update_news(news)
         {:ok, state}
+    end
+
+    def get_pid do
+        self()
     end
 
     def handle_cast({:send, {type, msg} = frame}, state) do

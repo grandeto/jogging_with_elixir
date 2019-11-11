@@ -1,8 +1,10 @@
-defmodule CryptoMarketService do
+defmodule Services.CryptoMarketService do
     # TODO Add remove assets, List all assets data, List single asset data
+    alias Storage.CryptoStorage, as: CryptoStorage
 
     def update_news(latest_news) do
         has_coin?(latest_news, CryptoStorage.get_state)
+        #|> IO.inspect()
         |> CryptoStorage.set_state()
     end
 

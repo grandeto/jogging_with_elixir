@@ -1,4 +1,7 @@
-defmodule CryptoController do
+defmodule Controllers.CryptoController do
+    alias Services.CryptoMarketService, as: CryptoMarketService
+    alias Storage.CryptoStorage, as: CryptoStorage
+
     def update_news(latest_news) do
         CryptoMarketService.update_news(latest_news)
     end
