@@ -25,3 +25,4 @@ markets-*.tar
 # Storage dir
 /storage/
 
+/.elixir_ls
