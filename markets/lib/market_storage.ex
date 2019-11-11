@@ -1,4 +1,5 @@
 defmodule CryptoStorage do
+    # TODO add GenServer
 
     defp storage_path(file) when is_bitstring(file) do
         "storage/crypto/" <> file
