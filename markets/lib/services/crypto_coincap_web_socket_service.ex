@@ -22,7 +22,8 @@ defmodule Services.CryptoCoincapWebSocketService do
     end
 
     def start_link(url, msg) do
-        WebSockex.start_link(url, __MODULE__, msg)
+        IO.inspect(generate_url())
+        WebSockex.start_link(generate_url(), __MODULE__, msg)
     end
 
     def handle_frame({_type, news}, msg) do

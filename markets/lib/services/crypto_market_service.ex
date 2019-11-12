@@ -6,8 +6,8 @@ defmodule Services.CryptoMarketService do
 
     defstruct state: %{}, save_state: :true
 
-    def init(init_arg) do
-        {:ok, init_arg}
+    def init(init_args) do
+        {:ok, init_args}
     end
 
     def child_spec(_) do
@@ -21,21 +21,22 @@ defmodule Services.CryptoMarketService do
         }
     end
 
-    def start_link(state) do
+    def start_link(state) when is_map(state) do
+        IO.inspect(state)
         GenServer.start_link(__MODULE__, state, name: __MODULE__)
     end
 
-    def update_news(latest_news) do
+    def index do
+        GenServer.call(__MODULE__, {:index})
+    end
+
+    def update_news(latest_news) when is_map(latest_news) do
         GenServer.call(__MODULE__, {:update_news, latest_news})
         #GenServer.cast(__MODULE__, {:update_news, latest_news})
     end
 
-    def index do
-        #IO.inspect(data)
-    end
-
-    def new(data) do
-        IO.puts(data)
+    def new(asset) when is_bitstring(asset) do
+        GenServer.call(__MODULE__, {:new, asset})
     end
 
     def show(id) do
@@ -46,15 +47,25 @@ defmodule Services.CryptoMarketService do
         IO.puts(id)
     end
 
+    def handle_call({:index}, _from, state) do
+        IO.inspect(state)
+        {:reply, state, state}
+    end
+
     def handle_call({:update_news, latest_news}, _from, state) do
-        new_state = has_coin?(latest_news, state)
-        IO.inspect(new_state)
-        {:reply, new_state, state}
+        state = has_coin?(latest_news, state)
+        {:reply, state, state}
+    end
+
+    def handle_call({:new, asset}, _from, state) do
+        current_assets = CryptoStorage.get_initial_assets_list
+        new_assets = Map.update(current_assets, asset, asset, fn _ -> asset end)
+        CryptoStorage.set_initial_assets_list(new_assets)
+        {:stop, :new_asset, state}
     end
 
     def handle_cast({:update_news, latest_news}, state) do
         new_state = has_coin?(latest_news, state)
-        IO.inspect(new_state)
         {:noreply, new_state}
     end
 
@@ -72,7 +83,7 @@ defmodule Services.CryptoMarketService do
                     "old_value" => :nil,
                     "updated_at" => DateTime.utc_now
                 },
-                fn %{"new_value" => old_val} = coin_data ->
+                fn %{"new_value" => old_val} ->
                     %{
                         "new_value" => new_val,
                         "old_value" => old_val,
