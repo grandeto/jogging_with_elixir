@@ -1,11 +1,33 @@
 defmodule Services.CryptoMarketService do
     # TODO Add remove assets, List all assets data, List single asset data
+
     alias Storage.CryptoStorage, as: CryptoStorage
+    use GenServer
+
+    defstruct state: %{}, save_state: :true
+
+    def init(init_arg) do
+        {:ok, init_arg}
+    end
+
+    def child_spec(_) do
+        %{
+            id: Services.CryptoMarketService,
+            start: {
+                Services.CryptoMarketService,
+                :start_link,
+                [CryptoStorage.get_state]
+            }
+        }
+    end
+
+    def start_link(state) do
+        GenServer.start_link(__MODULE__, state, name: __MODULE__)
+    end
 
     def update_news(latest_news) do
-        has_coin?(latest_news, CryptoStorage.get_state)
-        #|> IO.inspect()
-        |> CryptoStorage.set_state()
+        GenServer.call(__MODULE__, {:update_news, latest_news})
+        #GenServer.cast(__MODULE__, {:update_news, latest_news})
     end
 
     def index do
@@ -13,15 +35,27 @@ defmodule Services.CryptoMarketService do
     end
 
     def new(data) do
-        #IO.inspect(data)
+        IO.puts(data)
     end
 
     def show(id) do
-        #IO.inspect(data)
+        IO.puts(id)
     end
 
     def delete(id) do
-        #IO.inspect(data)
+        IO.puts(id)
+    end
+
+    def handle_call({:update_news, latest_news}, _from, state) do
+        new_state = has_coin?(latest_news, state)
+        IO.inspect(new_state)
+        {:reply, new_state, state}
+    end
+
+    def handle_cast({:update_news, latest_news}, state) do
+        new_state = has_coin?(latest_news, state)
+        IO.inspect(new_state)
+        {:noreply, new_state}
     end
 
     defp has_coin?(latest_news, state) when is_map(latest_news) do
