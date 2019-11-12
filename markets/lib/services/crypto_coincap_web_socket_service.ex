@@ -16,23 +16,23 @@ defmodule Services.CryptoCoincapWebSocketService do
             start: {
                 Services.CryptoCoincapWebSocketService,
                 :start_link,
-                [generate_url(), []]
+                [generate_url(), "Success"]
             }
         }
     end
 
-    def start_link(url, state) do
-        WebSockex.start_link(url, __MODULE__, state)
+    def start_link(url, msg) do
+        WebSockex.start_link(url, __MODULE__, msg)
     end
 
-    def handle_frame({_type, news}, state) do
+    def handle_frame({_type, news}, msg) do
         news = Jason.decode!(news)
         CryptoController.update_news(news)
-        {:ok, state}
+        {:ok, msg}
     end
 
-    def handle_cast({:send, {type, msg} = frame}, state) do
-        IO.puts "Sending #{type} frame with payload: #{msg}"
-        {:reply, frame, state}
-    end
+    # def handle_cast({:send, {type, news} = frame}, msg) do
+    #     IO.puts "Sending #{type} frame with payload: #{news}"
+    #     {:reply, frame, msg}
+    # end
 end
