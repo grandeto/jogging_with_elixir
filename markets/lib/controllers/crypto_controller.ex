@@ -6,19 +6,27 @@ defmodule Controllers.CryptoController do
         CryptoMarketService.index
     end
 
-    def update_news(latest_news) do
+    def add_new_asset(asset) when is_bitstring(asset) do
+        CryptoMarketService.new(asset)
+    end
+
+    def show_asset(asset) when is_bitstring(asset) do
+        CryptoMarketService.show(asset)
+    end
+
+    def update_news(latest_news) when is_map(latest_news) do
         CryptoMarketService.update_news(latest_news)
     end
 
-    def add_new_asset(asset) do
-        CryptoMarketService.new(asset)
+    def delete_asset(asset) when is_bitstring(asset) do
+        CryptoMarketService.delete(asset)
     end
 
     def get_initial_assets_list do
         CryptoStorage.get_initial_assets_list
     end
 
-    def set_initial_assets_list(map) do
+    def set_initial_assets_list(map) when is_map(map) do
         CryptoStorage.set_initial_assets_list(map)
     end
 end
