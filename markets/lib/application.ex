@@ -5,13 +5,14 @@ defmodule MarketsApplication do
 
   alias Services.CryptoCoincapWebSocketService, as: CryptoCoincapWebSocketService
   alias Services.CryptoMarketService, as: CryptoMarketService
+  alias Storage.CryptoStorage, as: CryptoStorage
 
   use Application
 
   def start(_type, _args) do
     children = [
-        CryptoMarketService,
-        CryptoCoincapWebSocketService
+        {CryptoMarketService, CryptoStorage.get_state},
+        {CryptoCoincapWebSocketService, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

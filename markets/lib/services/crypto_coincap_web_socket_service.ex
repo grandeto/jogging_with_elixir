@@ -10,30 +10,22 @@ defmodule Services.CryptoCoincapWebSocketService do
         String.slice(url, 0, String.length(url) - 1)
     end
 
-    def child_spec(_) do
-        %{
-            id: Services.CryptoCoincapWebSocketService,
-            start: {
-                Services.CryptoCoincapWebSocketService,
-                :start_link,
-                [generate_url(), "Success"]
-            }
-        }
+    def init(init_args) do
+        {:ok, init_args}
     end
 
-    def start_link(url, msg) do
-        IO.inspect(generate_url())
-        WebSockex.start_link(generate_url(), __MODULE__, msg)
+    def start_link(state) when is_list(state) do
+        WebSockex.start_link(generate_url(), __MODULE__, state)
     end
 
-    def handle_frame({_type, news}, msg) do
+    def handle_frame({_type, news}, state) do
         news = Jason.decode!(news)
         CryptoController.update_news(news)
-        {:ok, msg}
+        {:ok, state}
     end
 
-    # def handle_cast({:send, {type, news} = frame}, msg) do
+    # def handle_cast({:send, {type, news} = frame}, state) do
     #     IO.puts "Sending #{type} frame with payload: #{news}"
-    #     {:reply, frame, msg}
+    #     {:reply, frame, state}
     # end
 end
