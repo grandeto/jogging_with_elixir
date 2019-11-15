@@ -14,8 +14,8 @@ defmodule Services.CryptoCoincapWebSocketService do
         {:ok, init_args}
     end
 
-    def start_link(state) when is_list(state) do
-        WebSockex.start_link(generate_url(), __MODULE__, state)
+    def start_link(_) do
+        WebSockex.start_link(generate_url(), __MODULE__, [])
     end
 
     def handle_frame({_type, news}, state) do
