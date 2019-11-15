@@ -31,7 +31,7 @@ defmodule Services.CryptoMarketService do
     end
 
     def delete(asset) when is_bitstring(asset) do
-        # TODO
+        GenServer.call(__MODULE__, {:delete, asset})
     end
 
     def handle_call({:index}, _from, state) do
@@ -52,6 +52,14 @@ defmodule Services.CryptoMarketService do
     def handle_call({:update_news, latest_news}, _from, state) do
         state = has_coin?(latest_news, state)
         {:reply, state, state}
+    end
+
+    def handle_call({:delete, asset}, _from, state) do
+        current_assets = CryptoStorage.get_initial_assets_list
+        new_assets = Map.delete(current_assets, asset)
+        CryptoStorage.set_initial_assets_list(new_assets)
+        Map.delete(state, asset)
+        {:stop, :asset_removed, state}
     end
 
     # def handle_cast({:update_news, latest_news}, state) do
