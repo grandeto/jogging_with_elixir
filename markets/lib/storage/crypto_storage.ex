@@ -21,6 +21,14 @@ defmodule Storage.CryptoStorage do
         }
     end
 
+    def new_asset_obj do
+        %{
+            "new_value" => nil,
+            "old_value" => nil,
+            "updated_at" => nil
+        }
+    end
+
     defp storage_get(file) when is_bitstring(file) do
         File.read(storage_path(file))
     end
@@ -54,7 +62,7 @@ defmodule Storage.CryptoStorage do
         end
     end
 
-    def set_state(content) do
+    def set_state(content) when is_map(content) do
         storage_write(state_file(), content)
     end
 end
