@@ -1,16 +1,14 @@
 defmodule Services.CryptoMarketService do
 
-    alias Storage.CryptoStorage, as: CryptoStorage
+    alias Controllers.CryptoController, as: CryptoController
     use GenServer
-
-    defstruct state: %{}, save_state: :true
 
     def init(init_args) do
         {:ok, init_args}
     end
 
-    def start_link(state) when is_map(state) do
-        GenServer.start_link(__MODULE__, state, name: __MODULE__)
+    def start_link(_) do
+        GenServer.start_link(__MODULE__, CryptoController.get_state, name: __MODULE__)
     end
 
     def index do
@@ -39,9 +37,11 @@ defmodule Services.CryptoMarketService do
     end
 
     def handle_call({:new, asset}, _from, state) do
-        current_assets = CryptoStorage.get_initial_assets_list
+        current_assets = CryptoController.get_initial_assets_list
         new_assets = Map.update(current_assets, asset, asset, fn _ -> asset end)
-        CryptoStorage.set_initial_assets_list(new_assets)
+        CryptoController.set_initial_assets_list(new_assets)
+        Map.update(CryptoController.get_state, asset, CryptoController.get_new_asset_obj, fn value -> value end)
+        |> CryptoController.set_state
         {:stop, :new_asset_added, state}
     end
 
@@ -55,10 +55,11 @@ defmodule Services.CryptoMarketService do
     end
 
     def handle_call({:delete, asset}, _from, state) do
-        current_assets = CryptoStorage.get_initial_assets_list
+        current_assets = CryptoController.get_initial_assets_list
         new_assets = Map.delete(current_assets, asset)
-        CryptoStorage.set_initial_assets_list(new_assets)
-        Map.delete(state, asset)
+        CryptoController.set_initial_assets_list(new_assets)
+        state = Map.delete(state, asset)
+        CryptoController.set_state(state)
         {:stop, :asset_removed, state}
     end
 
