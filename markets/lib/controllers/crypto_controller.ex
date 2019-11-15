@@ -29,4 +29,16 @@ defmodule Controllers.CryptoController do
     def set_initial_assets_list(map) when is_map(map) do
         CryptoStorage.set_initial_assets_list(map)
     end
+
+    def get_state do
+        CryptoStorage.get_state
+    end
+
+    def set_state(state) when is_map(state) do
+        CryptoStorage.set_state(state)
+    end
+
+    def get_new_asset_obj do
+        CryptoStorage.new_asset_obj
+    end
 end
